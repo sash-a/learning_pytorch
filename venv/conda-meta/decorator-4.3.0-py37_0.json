@@ -1,0 +1,98 @@
+{
+  "build": "py37_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.7,<3.8.0a0"
+  ],
+  "extracted_package_dir": "/home/sasha/miniconda3/pkgs/decorator-4.3.0-py37_0",
+  "features": "",
+  "files": [
+    "lib/python3.7/site-packages/__pycache__/decorator.cpython-37.pyc",
+    "lib/python3.7/site-packages/decorator-4.3.0.dist-info/INSTALLER",
+    "lib/python3.7/site-packages/decorator-4.3.0.dist-info/METADATA",
+    "lib/python3.7/site-packages/decorator-4.3.0.dist-info/RECORD",
+    "lib/python3.7/site-packages/decorator-4.3.0.dist-info/WHEEL",
+    "lib/python3.7/site-packages/decorator-4.3.0.dist-info/pbr.json",
+    "lib/python3.7/site-packages/decorator-4.3.0.dist-info/top_level.txt",
+    "lib/python3.7/site-packages/decorator.py"
+  ],
+  "fn": "decorator-4.3.0-py37_0.tar.bz2",
+  "license": "BSD 3-Clause",
+  "link": {
+    "source": "/home/sasha/miniconda3/pkgs/decorator-4.3.0-py37_0",
+    "type": 1
+  },
+  "md5": "b0b408b0b5310461467b364cab85c886",
+  "name": "decorator",
+  "package_tarball_full_path": "/home/sasha/miniconda3/pkgs/decorator-4.3.0-py37_0.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "lib/python3.7/site-packages/__pycache__/decorator.cpython-37.pyc",
+        "path_type": "hardlink",
+        "sha256": "4e7fe870fa1509566e6e2716a187d0ffb82584c1ad6595f86df1f0826a5a7c39",
+        "sha256_in_prefix": "4e7fe870fa1509566e6e2716a187d0ffb82584c1ad6595f86df1f0826a5a7c39",
+        "size_in_bytes": 12200
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator-4.3.0.dist-info/INSTALLER",
+        "path_type": "hardlink",
+        "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+        "sha256_in_prefix": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+        "size_in_bytes": 4
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator-4.3.0.dist-info/METADATA",
+        "path_type": "hardlink",
+        "sha256": "23dbddf3b53ff74efd0153e597884d35947f27f7fb8499bc2287214ba237e42d",
+        "sha256_in_prefix": "23dbddf3b53ff74efd0153e597884d35947f27f7fb8499bc2287214ba237e42d",
+        "size_in_bytes": 2722
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator-4.3.0.dist-info/RECORD",
+        "path_type": "hardlink",
+        "sha256": "fd9063b5c9715db556d1958e033ae2be0dda374e0cbcee219ef46f6c7c445f7b",
+        "sha256_in_prefix": "fd9063b5c9715db556d1958e033ae2be0dda374e0cbcee219ef46f6c7c445f7b",
+        "size_in_bytes": 602
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator-4.3.0.dist-info/WHEEL",
+        "path_type": "hardlink",
+        "sha256": "81dbae3f206f149412434cddcb117b934cf29c35db21bbe0e59047a17ba6e6e9",
+        "sha256_in_prefix": "81dbae3f206f149412434cddcb117b934cf29c35db21bbe0e59047a17ba6e6e9",
+        "size_in_bytes": 110
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator-4.3.0.dist-info/pbr.json",
+        "path_type": "hardlink",
+        "sha256": "00bf38a14516407c2477c3823e12d1a363498d4e4c0dd99732a447bfea68b2ab",
+        "sha256_in_prefix": "00bf38a14516407c2477c3823e12d1a363498d4e4c0dd99732a447bfea68b2ab",
+        "size_in_bytes": 47
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator-4.3.0.dist-info/top_level.txt",
+        "path_type": "hardlink",
+        "sha256": "2a7e9e423a3cddcb56c5757204c398b74fd8a634630739ca615b8dcae0bf0d22",
+        "sha256_in_prefix": "2a7e9e423a3cddcb56c5757204c398b74fd8a634630739ca615b8dcae0bf0d22",
+        "size_in_bytes": 10
+      },
+      {
+        "_path": "lib/python3.7/site-packages/decorator.py",
+        "path_type": "hardlink",
+        "sha256": "74219fadf81a4c993d58f80b97defd3fe144f39be92615a6a363c5ed459212f8",
+        "sha256_in_prefix": "74219fadf81a4c993d58f80b97defd3fe144f39be92615a6a363c5ed459212f8",
+        "size_in_bytes": 16298
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "size": 15819,
+  "subdir": "linux-64",
+  "timestamp": 1530694332680,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/decorator-4.3.0-py37_0.tar.bz2",
+  "version": "4.3.0"
+}

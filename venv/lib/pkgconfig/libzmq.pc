@@ -1,0 +1,11 @@
+prefix=/home/sasha/Documents/Personal Projects/torch/venv
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libzmq
+Description: 0MQ c++ library
+Version: 4.2.5
+Libs: -L${libdir} -lzmq
+Libs.private: -lstdc++  -L/home/sasha/Documents/Personal Projects/torch/venv/lib -lsodium
+Cflags: -I${includedir} -DZMQ_BUILD_DRAFT_API=1

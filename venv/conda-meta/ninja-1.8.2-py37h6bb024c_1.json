@@ -1,0 +1,45 @@
+{
+  "build": "py37h6bb024c_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.2.0",
+    "libstdcxx-ng >=7.2.0",
+    "python >=3.7,<3.8.0a0"
+  ],
+  "extracted_package_dir": "/home/sasha/miniconda3/pkgs/ninja-1.8.2-py37h6bb024c_1",
+  "features": "",
+  "files": [
+    "bin/ninja"
+  ],
+  "fn": "ninja-1.8.2-py37h6bb024c_1.tar.bz2",
+  "license": "Apache 2.0",
+  "license_family": "Apache",
+  "link": {
+    "source": "/home/sasha/miniconda3/pkgs/ninja-1.8.2-py37h6bb024c_1",
+    "type": 1
+  },
+  "md5": "61c4f760ed48e6cc4e5256726e9e1fae",
+  "name": "ninja",
+  "package_tarball_full_path": "/home/sasha/miniconda3/pkgs/ninja-1.8.2-py37h6bb024c_1.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "bin/ninja",
+        "path_type": "hardlink",
+        "sha256": "e58547a50ff25ce0737efa60aec1ff16b877ba2967d12948c7f52400130d004d",
+        "sha256_in_prefix": "e58547a50ff25ce0737efa60aec1ff16b877ba2967d12948c7f52400130d004d",
+        "size_in_bytes": 3982832
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "size": 1376179,
+  "subdir": "linux-64",
+  "timestamp": 1530780138788,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/ninja-1.8.2-py37h6bb024c_1.tar.bz2",
+  "version": "1.8.2"
+}
