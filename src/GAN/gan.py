@@ -14,9 +14,7 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
-# from IPython.display import HTML
 
 from GAN.discriminator import Discriminator as Dis
 from GAN.generator import Generator as Gen
@@ -30,6 +28,9 @@ torch.manual_seed(manualSeed)
 
 # Root directory for dataset
 dataroot = "../../data/celeba"
+
+# Size of z latent vector (i.e. size of generator input)
+nz = 100
 
 # Number of workers for dataloader
 workers = 2
@@ -100,3 +101,33 @@ netG.apply(weights_init)
 
 # Print the model
 print(netG)
+
+
+# Create the Discriminator
+netD = Dis(ngpu).to(device)
+
+# Handle multi-gpu if desired
+if (device.type == 'cuda') and (ngpu > 1):
+    netD = nn.DataParallel(netD, list(range(ngpu)))
+
+# Apply the weights_init function to randomly initialize all weights
+#  to mean=0, stdev=0.2.
+netD.apply(weights_init)
+
+# Print the model
+print(netD)
+
+# Initialize BCELoss function
+criterion = nn.BCELoss()
+
+# Create batch of latent vectors that we will use to visualize
+#  the progression of the generator
+fixed_noise = torch.randn(64, nz, 1, 1, device=device)
+
+# Establish convention for real and fake labels during training
+real_label = 1
+fake_label = 0
+
+# Setup Adam optimizers for both G and D
+optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
+optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
