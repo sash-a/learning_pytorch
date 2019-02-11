@@ -15,12 +15,12 @@ import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
 
-import time
-
 from src.GAN.discriminator import Discriminator as Dis
 from src.GAN.generator import Generator as Gen
+from src.utils.utils import timeit
 
 
+@timeit
 def main():
     # Set random seem for reproducibility
     manualSeed = 999
@@ -46,7 +46,7 @@ def main():
     image_size = 64
 
     # Number of training epochs
-    num_epochs = 5
+    num_epochs = 10
 
     # Learning rate for optimizers
     lr = 0.0002
@@ -75,16 +75,6 @@ def main():
     # Decide which device we want to run on
     device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
     print(device)
-
-    # Plot some training images
-    # real_batch = next(iter(dataloader))
-    # plt.figure(figsize=(8, 8))
-    # plt.axis("off")
-    # plt.title("Training Images")
-    # plt.imshow(
-    #     np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu().numpy(),
-    #                  (1, 2, 0)))
-    # plt.savefig('../../test.jpg')
 
     # custom weights initialization called on netG and netD
     def weights_init(m):
@@ -146,8 +136,7 @@ def main():
     D_losses = []
     iters = 0
 
-    start_time = time.time()
-    print("Starting Training Loop at: ", time.time())
+    print("Starting Training Loop")
     # For each epoch
     for epoch in range(num_epochs):
         # For each batch in the dataloader
@@ -155,7 +144,7 @@ def main():
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
             ###########################
-            ## Train with all-real batch
+            # Train with all-real batch
             netD.zero_grad()
             # Format batch
             real_cpu = data[0].to(device)
@@ -217,18 +206,17 @@ def main():
                 with torch.no_grad():
                     fake = netG(fixed_noise).detach().cpu()
                 img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
-                g_loss_at_img_list.append(errG.item())
+                plt.figure(figsize=(8, 8))
+                plt.title('Imgs iter')
+                plt.imshow(
+                    np.transpose(img_list[len(img_list) - 1].to(device)[:64].cpu().numpy(), (1, 2, 0)))
+                plt.savefig(
+                    results_folder + 'epoch_i ' + str(epoch) + '_' + str(i) + ' loss ' +
+                    str(round(errG.item() * 100) / 100) + '.jpg')
 
             iters += 1
 
-    print('done training\nTook: ' + str(time.time() - start_time))
-
-    for i, img in enumerate(img_list):
-        plt.figure(figsize=(8, 8))
-        plt.title('Imgs iter')
-        plt.imshow(
-            np.transpose(img.to(device)[:64].cpu().numpy(), (1, 2, 0)))
-        plt.savefig(results_folder + 'i: '+ str(i) + ' loss: ' + str(G_losses[i]))
+    print('done training')
 
     plt.figure(figsize=(10, 5))
     plt.title("Generator and Discriminator Loss During Training")
@@ -239,8 +227,8 @@ def main():
     plt.legend()
     plt.savefig(results_folder + 'final.jpg')
 
-    torch.save(netD.state_dict(), '../../discriminator')
-    torch.save(netG.state_dict(), '../../generator')
+    torch.save(netD.state_dict(), '../../discriminator.tsr')
+    torch.save(netG.state_dict(), '../../generator.tsr')
 
 
 if __name__ == '__main__':
