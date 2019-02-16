@@ -20,17 +20,62 @@ from src.GAN.generator import Generator as Gen
 from src.utils.utils import timeit
 
 
+class gan(object):
+    def __init__(self, results_dir='../../results/', image_size=64, epochs=5, lr=0.0002, beta1=0.5, n_gpu=1):
+        """
+        GAN object containing a discriminator and generator
+        :param results_dir: folder for the results
+        :param image_size: spatial size of training images
+        :param epochs: number of training epochs
+        :param lr: learning rate
+        :param beta1: optimiser hyper-param
+        :param n_gpu: number of GPUs
+        """
+        self.seed = 999
+        self.results_dir = results_dir
+
+        self.n_g_input = 100  # size of z latent vector (or gen input)
+        self.image_size = image_size
+
+        self.n_epochs = epochs
+        self.beta1 = beta1
+        self.lr = lr
+
+        self.net_g = Gen(n_gpu)
+        self.net_d = Dis(n_gpu)
+
+        self.data_loader = None
+
+        device = torch.device("cuda:0" if (torch.cuda.is_available() and self.n_gpu > 0) else "cpu")
+        print('device: ', device)
+
+    def load_data(self, data_dir='../../data/celeba', batch_size=128, workers=2):
+        dataset = dset.ImageFolder(root=data_dir,
+                                   transform=transforms.Compose([
+                                       transforms.Resize(self.image_size),
+                                       transforms.CenterCrop(self.image_size),
+                                       transforms.ToTensor(),
+                                       transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                                   ]))
+        # Create the data loader
+        self.data_loader = \
+            torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=workers)
+
+        return self
+
+
 @timeit
 def main():
     # Set random seem for reproducibility
     manualSeed = 999
     # manualSeed = random.randint(1, 10000) # use if you want new results
-    print("Random Seed: ", manualSeed)
     random.seed(manualSeed)
     torch.manual_seed(manualSeed)
 
     # Root directory for dataset
-    dataroot = "../../data/celeba"
+    data_dir = "../../data/celeba"
+    # Prefix of where to save img results
+    results_dir = '../../results/'
 
     # Size of z latent vector (i.e. size of generator input)
     nz = 100
@@ -57,12 +102,9 @@ def main():
     # Number of GPUs available. Use 0 for CPU mode.
     ngpu = 1
 
-    # Prefix of where to save img results
-    results_folder = '../../results/'
-
     # We can use an image folder dataset the way we have it setup.
     # Create the dataset
-    dataset = dset.ImageFolder(root=dataroot,
+    dataset = dset.ImageFolder(root=data_dir,
                                transform=transforms.Compose([
                                    transforms.Resize(image_size),
                                    transforms.CenterCrop(image_size),
@@ -74,7 +116,7 @@ def main():
 
     # Decide which device we want to run on
     device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
-    print(device)
+    print('device: ', device)
 
     # custom weights initialization called on netG and netD
     def weights_init(m):
@@ -86,37 +128,33 @@ def main():
             nn.init.constant_(m.bias.data, 0)
 
     # Create the generator
-    netG = Gen(ngpu).to(device)
+    net_g = Gen(ngpu).to(device)
 
     # Handle multi-gpu if desired
     if (device.type == 'cuda') and (ngpu > 1):
-        netG = nn.DataParallel(netG, list(range(ngpu)))
+        net_g = nn.DataParallel(net_g, list(range(ngpu)))
 
     # Apply the weights_init function to randomly initialize all weights to mean=0, stdev=0.2.
-    netG.apply(weights_init)
-
-    # Print the model
-    print(netG)
+    net_g.apply(weights_init)
 
     # Create the Discriminator
-    netD = Dis(ngpu).to(device)
+    net_d = Dis(ngpu).to(device)
 
     # Handle multi-gpu if desired
     if (device.type == 'cuda') and (ngpu > 1):
-        netD = nn.DataParallel(netD, list(range(ngpu)))
+        net_d = nn.DataParallel(net_d, list(range(ngpu)))
 
     # Apply the weights_init function to randomly initialize all weights
     #  to mean=0, stdev=0.2.
-    netD.apply(weights_init)
+    net_d.apply(weights_init)
 
-    # Print the model
-    print(netD)
+    print('Generator: ', net_g, sep='\n')
+    print('Discriminator: ', net_d, sep='\n')
 
     # Initialize BCELoss function
     criterion = nn.BCELoss()
 
-    # Create batch of latent vectors that we will use to visualize
-    #  the progression of the generator
+    # Create batch of latent vectors that we will use to visualize the progression of the generator
     fixed_noise = torch.randn(64, nz, 1, 1, device=device)
 
     # Establish convention for real and fake labels during training
@@ -124,14 +162,13 @@ def main():
     fake_label = 0
 
     # Setup Adam optimizers for both G and D
-    optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
-    optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
+    optimizerD = optim.Adam(net_d.parameters(), lr=lr, betas=(beta1, 0.999))
+    optimizerG = optim.Adam(net_g.parameters(), lr=lr, betas=(beta1, 0.999))
 
     # Training Loop
 
     # Lists to keep track of progress
     img_list = []
-    g_loss_at_img_list = []
     G_losses = []
     D_losses = []
     iters = 0
@@ -145,13 +182,13 @@ def main():
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
             ###########################
             # Train with all-real batch
-            netD.zero_grad()
+            net_d.zero_grad()
             # Format batch
             real_cpu = data[0].to(device)
             b_size = real_cpu.size(0)
             label = torch.full((b_size,), real_label, device=device)
             # Forward pass real batch through D
-            output = netD(real_cpu).view(-1)
+            output = net_d(real_cpu).view(-1)
             # Calculate loss on all-real batch
             errD_real = criterion(output, label)
             # Calculate gradients for D in backward pass
@@ -162,10 +199,10 @@ def main():
             # Generate batch of latent vectors
             noise = torch.randn(b_size, nz, 1, 1, device=device)
             # Generate fake image batch with G
-            fake = netG(noise)
+            fake = net_g(noise)
             label.fill_(fake_label)
             # Classify all fake batch with D
-            output = netD(fake.detach()).view(-1)
+            output = net_d(fake.detach()).view(-1)
             # Calculate D's loss on the all-fake batch
             errD_fake = criterion(output, label)
             # Calculate the gradients for this batch
@@ -179,10 +216,10 @@ def main():
             ############################
             # (2) Update G network: maximize log(D(G(z)))
             ###########################
-            netG.zero_grad()
+            net_g.zero_grad()
             label.fill_(real_label)  # fake labels are real for generator cost
             # Since we just updated D, perform another forward pass of all-fake batch through D
-            output = netD(fake).view(-1)
+            output = net_d(fake).view(-1)
             # Calculate G's loss based on this output
             errG = criterion(output, label)
             # Calculate gradients for G
@@ -204,14 +241,14 @@ def main():
             # Check how the generator is doing by saving G's output on fixed_noise
             if (iters % 500 == 0) or ((epoch == num_epochs - 1) and (i == len(dataloader) - 1)):
                 with torch.no_grad():
-                    fake = netG(fixed_noise).detach().cpu()
+                    fake = net_g(fixed_noise).detach().cpu()
                 img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
                 plt.figure(figsize=(8, 8))
                 plt.title('Imgs iter')
                 plt.imshow(
                     np.transpose(img_list[len(img_list) - 1].to(device)[:64].cpu().numpy(), (1, 2, 0)))
                 plt.savefig(
-                    results_folder + 'epoch_i ' + str(epoch) + '_' + str(i) + ' loss ' +
+                    results_dir + 'epoch_i ' + str(epoch) + '_' + str(i) + ' loss ' +
                     str(round(errG.item() * 100) / 100) + '.jpg')
 
             iters += 1
@@ -225,10 +262,10 @@ def main():
     plt.xlabel("iterations")
     plt.ylabel("Loss")
     plt.legend()
-    plt.savefig(results_folder + 'final.jpg')
+    plt.savefig(results_dir + 'final.jpg')
 
-    torch.save(netD.state_dict(), '../../discriminator.tsr')
-    torch.save(netG.state_dict(), '../../generator.tsr')
+    torch.save(net_d.state_dict(), '../../discriminator.tsr')
+    torch.save(net_g.state_dict(), '../../generator.tsr')
 
 
 if __name__ == '__main__':
