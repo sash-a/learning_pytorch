@@ -13,9 +13,9 @@ def imsave(batch, device, title):
     plt.axis("off")
     plt.title(title)
     plt.imshow(
-        np.transpose(vutils.make_grid(batch[0].to(device)[:64], padding=2, normalize=True).cpu().numpy(), (1, 2, 0))
+        np.transpose(vutils.make_grid(batch[:64], padding=2, normalize=True).cpu().numpy(), (1, 2, 0))
     )
-    plt.savefig(+ title)
+    plt.savefig(title + '.jpg')
 
 
 def timeit(f):
